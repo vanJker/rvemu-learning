@@ -8,8 +8,10 @@ int main(int argc, char *argv[]) {
     machine_t machine = {0};
     machine_load_program(&machine, argv[1]);
 
-    printf("hello, rvemu\n");
-    printf("entry: 0x%lx\n", machine.mmu.entry);
-    printf("host alloc: 0x%lx\n", machine.mmu.host_alloc);
+    while (true) {
+        enum exit_reason_t exit_reason = machine_step(&machine);
+        assert(exit_reason == ecall);
+    }
+
     return 0;
 }
