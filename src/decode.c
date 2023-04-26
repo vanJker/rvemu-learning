@@ -5,10 +5,10 @@
 void insn_decode(insn_t *insn, u32 data) { 
     u32 quadrant = QUADRANT(data); 
     switch (quadrant) {
-    case 0x00: fatal("unimplent");
-    case 0x01: fatal("unimplent");
-    case 0x10: fatal("unimplent");
-    case 0x11: fatal("unimplent");
+    case 0x0: fatal("unimplemented");
+    case 0x1: fatal("unimplemented");
+    case 0x2: fatal("unimplemented");
+    case 0x3: fatal("unimplemented");
     default: unreachable();
     }
 }
