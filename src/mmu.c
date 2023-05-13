@@ -13,7 +13,7 @@ static void load_phdr(elf64_phdr_t *phdr, elf64_ehdr_t *ehdr, i64 i, FILE *file)
 static int flags_to_mmap_prot(u32 flags) {
     return (flags & PF_R ? PROT_READ : 0) |
            (flags & PF_W ? PROT_WRITE : 0) |
-           (flags * PF_X ? PROT_EXEC: 0); 
+           (flags & PF_X ? PROT_EXEC: 0); 
 }
 
 static void mmu_load_segment(mmu_t *mmu, elf64_phdr_t *phdr, int fd) {
