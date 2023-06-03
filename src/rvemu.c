@@ -1,16 +1,19 @@
 #include "rvemu.h"
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        fatal("load program: ./rvemu $(program)");
-    }
+    assert(argc > 1);
 
     machine_t machine = {0};
     machine_load_program(&machine, argv[1]);
+    machine_setup(&machine, argc, argv);
 
     while (true) {
         enum exit_reason_t exit_reason = machine_step(&machine);
         assert(exit_reason == ecall);
+
+        u64 syscall = machine_get_gp_reg(&machine, a7);
+        u64 ret = do_syscall(&machine, syscall);
+        machine_set_gp_reg(&machine, a0, ret);
     }
 
     return 0;

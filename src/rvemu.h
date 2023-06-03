@@ -26,6 +26,8 @@
 #define MIN(x, y)       (((x) < (y)) ? (x) : (y))
 #define MAX(x, y)       (((x) > (y)) ? (x) : (y))
 
+#define ARRAY_SIZE(x)   (sizeof(x)/sizeof(x[0]))
+
 #define GUEST_MEMORY_OFFSET 0x088800000000ULL
 #define TO_HOST(addr)   (addr + GUEST_MEMORY_OFFSET)
 #define TO_GUEST(addr)  (addr - GUEST_MEMORY_OFFSET)
@@ -89,6 +91,11 @@ typedef struct {
 } mmu_t;
 
 void mmu_load_elf(mmu_t *, int);
+u64 mmu_alloc(mmu_t *, i64);
+
+inline void mmu_write(u64 addr, u8 *data, size_t len) {
+    memcpy((void *)TO_HOST(addr), (void *)data, len);
+}
 
 /**
  * state.c
@@ -124,6 +131,17 @@ typedef struct {
 
 enum exit_reason_t machine_step(machine_t *);
 void machine_load_program(machine_t *, char *);
+void machine_setup(machine_t *, int, char **);
+
+inline u64 machine_get_gp_reg(machine_t *m, i32 reg) {
+    assert(reg >= 0 && reg < num_gp_regs);
+    return m->state.gp_regs[reg];
+}
+
+inline void machine_set_gp_reg(machine_t *m, i32 reg, u64 data) {
+    assert(reg >= 0 && reg < num_gp_regs);
+    m->state.gp_regs[reg] = data;
+}
 
 /**
  * interp.c
@@ -134,3 +152,8 @@ void exec_block_interp(state_t *);
  * decode.c
 */
 void insn_decode(insn_t *, u32);
+
+/**
+ * syscall.c
+*/
+u64 do_syscall(machine_t *, u64);
